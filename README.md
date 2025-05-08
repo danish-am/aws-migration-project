@@ -168,12 +168,61 @@ terraform state list
 
 ## ⚠️ **Challenges Faced & Resolutions**
 
+````markdown
+## ⚠️ **Challenges Faced & Resolutions**
+
+Throughout this migration project, we faced several technical challenges across different phases: manual import, Python automation, and Terraformer-generated state.
+
+Below is a detailed breakdown of these challenges and how we resolved them.
+
 ---
 
-✅ **Issue:** Terraformer-generated resource names had unexpected prefixes like `tfer--1-terraform-migration`
+### ✅ **1. Terraform Import & Python Automation Phase**
+
+We initially attempted to import resources manually using `terraform import`, like:
+
+```bash
+terraform import aws_vpc.main vpc-xxxxxxxx
+terraform import aws_subnet.a subnet-xxxxxxxx
+terraform import aws_instance.ec2["web1"] i-xxxxxxxx
+````
+
+✅ **Issue:** Manually importing each resource was tedious and error-prone.
+
+👉 **Resolution:** Created an automation script `import_script.py` to batch `terraform import` commands for multiple resources, reading from a predefined list.
+
+✅ **Issue:** Even after importing, some resources required **additional attributes configured in `main.tf`**, or Terraform would mark them for changes.
+
+👉 **Resolution:** Manually updated `main.tf` to include missing attributes (e.g. `tags`, `encryption`, `acl`) to match live AWS configuration.
+
+---
+
+### ✅ **2. Terraformer-generated State Phase**
+
+We used **Terraformer** to auto-generate Terraform configuration + state:
+
+```bash
+terraformer import aws --resources=s3 --regions=us-east-1 --output=generated --path-pattern="{output}/{provider}/{service}"
+```
+
+Terraformer created:
+
+```
+generated/aws/s3/terraform.tfstate
+generated/aws/s3/resources.tf
+```
+
+✅ **Issue:** Terraformer-generated resource names had unexpected prefixes like `tfer--1-terraform-migration`.
 
 👉 **Resolution:**
-Used `terraform state mv` to **rename resources** to match expected naming convention:
+
+We listed resources from Terraformer’s state:
+
+```bash
+terraform state list -state=generated/aws/s3/terraform.tfstate
+```
+
+We used `terraform state mv` to migrate resources from Terraformer’s state into the main Terraform state file:
 
 ```bash
 terraform state mv \
@@ -182,33 +231,33 @@ terraform state mv \
   'aws_s3_bucket.buckets["1-terraform-migration"]'
 ```
 
-✅ Important: wrapped destination address in **quotes** to handle brackets.
+✅ Important: wrapped destination resource address in **quotes** to handle brackets in the name.
 
 ---
 
-✅ **Issue:** Error merging state files (e.g. `lineage mismatch`, `cannot overwrite state`)
+### ✅ **3. State Merge & Lineage Conflict**
 
-👉 **Resolution:**
-Avoided using `terraform state push merged.tfstate` (which failed due to different lineage IDs).
-Instead, migrated resources **one by one** from Terraformer-generated state into main state:
+We tried directly merging Terraformer’s state into main state:
 
 ```bash
-terraform state list -state=generated/aws/s3/terraform.tfstate
-
-terraform state mv \
-  -state=generated/aws/s3/terraform.tfstate \
-  'aws_s3_bucket.tfer--2-terraform-migration' \
-  'aws_s3_bucket.buckets["2-terraform-migration"]'
+terraform state push merged.tfstate
 ```
 
-✅ This preserved state integrity while consolidating states.
+✅ **Issue:** Failed with `lineage mismatch` / `cannot overwrite existing state` errors.
+
+👉 **Resolution:**
+Instead of pushing a merged file, we **moved each resource one by one** using `terraform state mv`, which preserved state lineage and prevented corruption.
+
+✅ This kept state integrity while consolidating resources.
 
 ---
 
-✅ **Issue:** Errors in `terraform state mv` when importing indexed resources (like `aws_s3_bucket.buckets["bucket-name"]`)
+### ✅ **4. Resource Addressing Syntax**
+
+✅ **Issue:** Errors in `terraform state mv` when importing indexed resources like `aws_s3_bucket.buckets["bucket-name"]`.
 
 👉 **Resolution:**
-Always wrapped resource addresses with **single quotes** to avoid CLI parsing issues:
+We wrapped resource addresses in **single quotes** to avoid CLI parsing errors:
 
 ```bash
 terraform state mv \
@@ -217,6 +266,40 @@ terraform state mv \
 ```
 
 ✅ Without quotes → Terraform CLI would throw a syntax error.
+
+---
+
+### ✅ **5. Final State Validation**
+
+After migrating all resources:
+
+✅ Ran `terraform state list` to confirm resources successfully transferred into `terraform_new/terraform.tfstate`.
+
+✅ Verified infrastructure consistency with:
+
+```bash
+terraform plan
+```
+
+🔍 Ensured Terraform showed **“No changes”**, confirming that imported resources matched the Terraform configuration.
+
+---
+
+## 🎯 **Summary Workflow**
+
+1. Initial infrastructure was imported manually via `terraform import` and automated using `import_script.py`.
+2. Terraformer generated additional resources + state under `generated/aws/s3/`.
+3. We listed Terraformer state resources and mapped them to desired names.
+4. Used `terraform state mv` to move resources from Terraformer state → into `terraform_new/terraform.tfstate`.
+5. Handled renaming, quoting, lineage conflicts manually.
+6. Validated merged state by listing resources and running `terraform plan`.
+
+✅ This enabled **a clean migration into a single consolidated Terraform-managed state file**, with no plan drift.
+
+---
+
+🎉 These resolutions ensured **state integrity, no drift detection issues, and a successful infrastructure migration**.
+
 
 ---
 
