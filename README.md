@@ -168,15 +168,86 @@ terraform state list
 
 ## ⚠️ **Challenges Faced & Resolutions**
 
-| Issue                                                       | Resolution                                                 |
-| ----------------------------------------------------------- | ---------------------------------------------------------- |
-| `fork/exec : no such file or directory` running terraformer | Ensured `terraformer` binary was in `PATH` and executable  |
-| Errors in `terraform state mv` with index brackets          | Added single quotes to resource addresses                  |
-| State merge `lineage` error                                 | Used manual state movement instead of direct `state push`  |
-| `.terraform` provider binaries too large for GitHub push    | Added `.terraform/` to `.gitignore` and reinitialized repo |
-| Lambda `environment Variables` JSON parsing error           | Used `env.json` file instead of inline JSON string         |
-| Lambda role `cannot be assumed`                             | Updated trust policy for `lambda-execution-role`           |
-| Lambda permission `cloudformation:DetectStackDrift` denied  | Attached required IAM permissions to Lambda role           |
+
+````markdown
+## ⚠️ **Challenges Faced & Resolutions**
+
+✅ **Issue:** `fork/exec : no such file or directory` when running `terraformer`  
+👉 **Resolution:**  
+- Verified `terraformer` binary existed in the working directory  
+- Made it executable with `chmod +x terraformer`  
+- Added directory to `$PATH`:  
+
+```bash
+export PATH=$PATH:/path/to/terraformer-directory
+````
+
+* Confirmed installation using:
+
+```bash
+terraformer --version
+```
+
+---
+
+✅ **Issue:** Terraformer-generated resource names had unexpected prefixes like `tfer--1-terraform-migration`
+👉 **Resolution:**
+Used `terraform state mv` to **rename resources** to match expected naming convention:
+
+```bash
+terraform state mv \
+  -state=generated/aws/s3/terraform.tfstate \
+  'aws_s3_bucket.tfer--1-terraform-migration' \
+  'aws_s3_bucket.buckets["1-terraform-migration"]'
+```
+
+✅ Important: wrapped destination address in **quotes** to handle brackets.
+
+---
+
+✅ **Issue:** Error merging state files (e.g. `lineage mismatch`, `cannot overwrite state`)
+👉 **Resolution:**
+Avoided using `terraform state push merged.tfstate` (which failed due to different lineage IDs).
+Instead, migrated resources **one by one** from Terraformer-generated state into main state:
+
+```bash
+terraform state list -state=generated/aws/s3/terraform.tfstate
+
+terraform state mv \
+  -state=generated/aws/s3/terraform.tfstate \
+  'aws_s3_bucket.tfer--2-terraform-migration' \
+  'aws_s3_bucket.buckets["2-terraform-migration"]'
+```
+
+✅ This preserved state integrity while consolidating states.
+
+---
+
+✅ **Issue:** Errors in `terraform state mv` when importing indexed resources (like `aws_s3_bucket.buckets["bucket-name"]`)
+👉 **Resolution:**
+Always wrapped resource addresses with **single quotes** to avoid CLI parsing issues:
+
+```bash
+terraform state mv \
+  'aws_s3_bucket.tfer--3-terraform-migration' \
+  'aws_s3_bucket.buckets["3-terraform-migration"]'
+```
+
+✅ Without quotes → Terraform CLI would throw a syntax error.
+
+---
+
+🎉 These resolutions ensured a **clean migration from Terraformer-generated state → main Terraform-managed state** without breaking state lineage or causing import conflicts.
+
+```
+
+---
+
+✅ **You can paste this directly into your README, replacing the old Challenges & Resolutions section!**  
+✅ It’s clean, Markdown-formatted, and fits your earlier style.
+
+Let me know if you want it more minimal or expanded! 🚀
+```
 
 ---
 
