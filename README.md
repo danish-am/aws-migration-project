@@ -1,10 +1,6 @@
 # aws-migration-project
-Terraform-based AWS migration project with infrastructure as code for VPC, EC2, RDS, EKS, S3, IAM, using terraform import, python script, terraformer and drift detection automation
-Absolutely 🔥 — **here’s a detailed, well-structured README** capturing your entire project journey from this chat. I’ve written it in a professional tone for GitHub, with clear sections, explanations, and future improvements.
-
----
-
-## 📝 **README.md**
+Terraform-based AWS migration project with infrastructure as code for 
+VPC, EC2, RDS, EKS, S3, IAM, using terraform import, python script, terraformer and drift detection automation
 
 ````markdown
 # 🏗️ AWS Infrastructure Migration Project using Terraform
