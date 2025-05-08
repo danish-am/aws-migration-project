@@ -168,26 +168,6 @@ terraform state list
 
 ## ⚠️ **Challenges Faced & Resolutions**
 
-
-````markdown
-## ⚠️ **Challenges Faced & Resolutions**
-
-✅ **Issue:** `fork/exec : no such file or directory` when running `terraformer`  
-👉 **Resolution:**  
-- Verified `terraformer` binary existed in the working directory  
-- Made it executable with `chmod +x terraformer`  
-- Added directory to `$PATH`:  
-
-```bash
-export PATH=$PATH:/path/to/terraformer-directory
-````
-
-* Confirmed installation using:
-
-```bash
-terraformer --version
-```
-
 ---
 
 ✅ **Issue:** Terraformer-generated resource names had unexpected prefixes like `tfer--1-terraform-migration`
