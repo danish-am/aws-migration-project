@@ -208,43 +208,10 @@ aws-migration-project/
 
 ---
 
-## 💬 **How to Use This Repository**
-
-1. Clone this repo:
-
-   ```bash
-   git clone https://github.com/danish-am/aws-migration-project.git
-   cd aws-migration-project
-   ```
-
-2. Review `terraform_new` for current infrastructure.
-
-3. Initialize Terraform:
-
-   ```bash
-   terraform init
-   ```
-
-4. Validate and plan:
-
-   ```bash
-   terraform validate
-   terraform plan
-   ```
-
-5. Apply:
-
-   ```bash
-   terraform apply
-   ```
-
----
-
 ## 🏁 **Final Notes**
 
 ✅ This project showcases **a full migration workflow from unmanaged infrastructure → Terraform-managed**.
 
 ✅ Explores **multiple import methods**, **state file manipulation**, **resolving import conflicts**, and lays a foundation for **drift detection automation**.
 
----
-
+```
