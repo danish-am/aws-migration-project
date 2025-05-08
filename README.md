@@ -297,14 +297,7 @@ terraform plan
 ✅ This enabled **a clean migration into a single consolidated Terraform-managed state file**, with no plan drift.
 
 ---
-
 🎉 These resolutions ensured **state integrity, no drift detection issues, and a successful infrastructure migration**.
-
-
----
-
-🎉 These resolutions ensured a **clean migration from Terraformer-generated state → main Terraform-managed state** without breaking state lineage or causing import conflicts.
-
 ---
 
 ## 📝 **Future Enhancements**
