@@ -223,15 +223,6 @@ terraform state mv \
 🎉 These resolutions ensured a **clean migration from Terraformer-generated state → main Terraform-managed state** without breaking state lineage or causing import conflicts.
 
 ```
-
----
-
-✅ **You can paste this directly into your README, replacing the old Challenges & Resolutions section!**  
-✅ It’s clean, Markdown-formatted, and fits your earlier style.
-
-Let me know if you want it more minimal or expanded! 🚀
-```
-
 ---
 
 ## 📝 **Future Enhancements**
@@ -276,4 +267,3 @@ aws-migration-project/
 ✅ This project showcases **a full migration workflow from unmanaged infrastructure → Terraform-managed**.
 
 ✅ Explores **multiple import methods**, **state file manipulation**, **resolving import conflicts**, and lays a foundation for **drift detection automation**
-```
