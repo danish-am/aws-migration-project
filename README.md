@@ -171,6 +171,7 @@ terraform state list
 ---
 
 ✅ **Issue:** Terraformer-generated resource names had unexpected prefixes like `tfer--1-terraform-migration`
+
 👉 **Resolution:**
 Used `terraform state mv` to **rename resources** to match expected naming convention:
 
@@ -186,6 +187,7 @@ terraform state mv \
 ---
 
 ✅ **Issue:** Error merging state files (e.g. `lineage mismatch`, `cannot overwrite state`)
+
 👉 **Resolution:**
 Avoided using `terraform state push merged.tfstate` (which failed due to different lineage IDs).
 Instead, migrated resources **one by one** from Terraformer-generated state into main state:
@@ -204,6 +206,7 @@ terraform state mv \
 ---
 
 ✅ **Issue:** Errors in `terraform state mv` when importing indexed resources (like `aws_s3_bucket.buckets["bucket-name"]`)
+
 👉 **Resolution:**
 Always wrapped resource addresses with **single quotes** to avoid CLI parsing issues:
 
