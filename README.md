@@ -275,6 +275,5 @@ aws-migration-project/
 
 ✅ This project showcases **a full migration workflow from unmanaged infrastructure → Terraform-managed**.
 
-✅ Explores **multiple import methods**, **state file manipulation**, **resolving import conflicts**, and lays a foundation for **drift detection automation**.
-
+✅ Explores **multiple import methods**, **state file manipulation**, **resolving import conflicts**, and lays a foundation for **drift detection automation**
 ```
