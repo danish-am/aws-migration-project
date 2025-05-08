@@ -1,23 +1,28 @@
-````markdown
 # 🏗️ AWS Infrastructure Migration Project using Terraform
 
-This repository contains an end-to-end project for migrating and managing AWS infrastructure using **Terraform**, including **importing existing resources**, **state management**, and extending the setup for **drift detection and notifications**.
+This repository contains an end-to-end project for migrating and managing AWS infrastructure
+using **Terraform**, including **importing existing resources**, **state management**, and extending
+the setup for **drift detection and notifications**.
 
-It documents the process of provisioning infrastructure, importing existing AWS resources into Terraform, managing Terraform state files, resolving challenges, and setting up CI/CD pipelines or AWS Lambda for monitoring.
+It documents the process of provisioning infrastructure, importing existing AWS resources into Terraform,
+managing Terraform state files, resolving challenges, and setting up CI/CD pipelines or AWS Lambda for monitoring.
 
 ---
 
 ## 🚀 **Project Overview**
 
-✅ The infrastructure was initially provisioned using Terraform scripts in a folder named `terraform_old`.
+✅ The infrastructure was initially provisioned using Terraform scripts in a folder named
+`terraform_old`.
 
-✅ Later, a migration effort was performed to import existing AWS resources into a new Terraform-managed state in `terraform_new`, using:
+✅ Later, a migration effort was performed to import existing AWS resources into a new
+Terraform-managed state in `terraform_new`, using:
 
 - `terraform import`
 - a **Python automation script**
 - [`Terraformer`](https://github.com/GoogleCloudPlatform/terraformer)
 
-✅ Finally, state files were merged to have a consolidated view of the infrastructure under Terraform management.
+✅ Finally, state files were merged to have a consolidated view of the infrastructure
+under Terraform management.
 
 ---
 
@@ -25,7 +30,8 @@ It documents the process of provisioning infrastructure, importing existing AWS 
 
 ### 1️⃣ **Initial Provisioning (`terraform_old/`)**
 
-- Infrastructure was first provisioned manually with Terraform in a folder called `terraform_old`.
+- Infrastructure was first provisioned manually with Terraform in a folder called
+  `terraform_old`.
 - This included resources like:
   - VPC
   - Subnets
@@ -40,11 +46,14 @@ It documents the process of provisioning infrastructure, importing existing AWS 
 
 ### 2️⃣ **Resetting State for Migration**
 
-- To simulate a migration of existing infrastructure, the Terraform state was deleted (by removing `terraform.tfstate`), leaving the infrastructure deployed in AWS but **untracked by Terraform.**
+- To simulate a migration of existing infrastructure, the Terraform state was deleted
+  (by removing `terraform.tfstate`), leaving the infrastructure deployed in AWS
+  but **untracked by Terraform**.
 
 📝 **Goal:** re-import these resources back into Terraform management.
 
 ---
+
 
 ### 3️⃣ **New Project Setup (`terraform_new/`)**
 
