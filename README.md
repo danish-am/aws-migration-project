@@ -222,7 +222,6 @@ terraform state mv \
 
 🎉 These resolutions ensured a **clean migration from Terraformer-generated state → main Terraform-managed state** without breaking state lineage or causing import conflicts.
 
-```
 ---
 
 ## 📝 **Future Enhancements**
